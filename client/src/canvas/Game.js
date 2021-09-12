@@ -7,7 +7,7 @@ export class Game {
         this.oldData = {};
         this.loadCallback = loadCallback;
         this.images = {};
-        this.screen = new Screen();
+        this.screen = new Screen(data);
     }
 
     initial = async () => {
@@ -26,40 +26,32 @@ export class Game {
     }
 
     frame = () => {
-        this.fill();
         requestAnimationFrame((time) => this.frame(time))
     }
 
-    fill = () => {
+    getRhombus = ([x, y, color]) => {
         const {context} = this.screen;
-        const {sizeMap, sizeCell} = this.data;
-        const start = {
-            x: 800,
-            y: 300
+        context.fillStyle = color;
+        context.beginPath();
+        context.moveTo(x, y);
+        context.lineTo(x + 32, y -16);
+        context.lineTo(x + 64, y);
+        context.lineTo(x + 32, y + 16);
+        context.lineTo(x, y);
+        context.fill();
+    }
+
+    fillSubstrate = () => {
+        const {cellHeight} = this.data;
+
+        for (let i = 0; i < this.screen.width + cellHeight; i+= (cellHeight * 2)) {
+
+            for (let j = 0; j < this.screen.height + cellHeight; j+= cellHeight) {
+                this.getRhombus([i, j, '#eee']);
+                this.getRhombus([i - cellHeight, j + cellHeight / 2, '#ddd']);
+            }
+
         }
 
-        for (let i = 1; i <= sizeMap.x; i++) {
-            context.moveTo(
-                start.x + (i * sizeCell.y),
-                start.y + (i * sizeCell.y / 2)
-            );
-            console.log('START', (i * sizeCell.y),
-                (i * sizeCell.y / 2));
-            context.lineTo(
-                start.x + sizeMap.x * sizeCell.y + (i * sizeCell.y),
-                start.y -(sizeMap.y * sizeCell.y / 2)  + (i * sizeCell.y / 2)
-            );
-            console.log('FINISH', sizeMap.x * sizeCell.y + (i * sizeCell.y),
-                -(sizeMap.y * sizeCell.y / 2)  + (i * sizeCell.y / 2));
-        }
-
-        for (var y = 0.5; y < 400; y += 10) {
-            //console.log(y)
-            context.moveTo(0, y);
-            context.lineTo(400, y);
-        }
-
-        context.strokeStyle = "#888";
-        context.stroke();
     }
 }
