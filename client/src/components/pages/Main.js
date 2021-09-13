@@ -8,14 +8,10 @@ const Canvas = styled.canvas`
 class Main extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            cellHeight: 32
-        }
     }
 
     componentDidMount() {
-        const {sizeMap, cellHeight} = this.state;
-        this.game = new Game({sizeMap, cellHeight}, this.loadCallback);
+        this.game = new Game({}, this.loadCallback);
         this.game.run();
     }
 

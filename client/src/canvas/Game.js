@@ -7,7 +7,7 @@ export class Game {
         this.oldData = {};
         this.loadCallback = loadCallback;
         this.images = {};
-        this.screen = new Screen(data);
+        this.screen = new Screen();
     }
 
     initial = async () => {
@@ -27,31 +27,5 @@ export class Game {
 
     frame = () => {
         requestAnimationFrame((time) => this.frame(time))
-    }
-
-    getRhombus = ([x, y, color]) => {
-        const {context} = this.screen;
-        context.fillStyle = color;
-        context.beginPath();
-        context.moveTo(x, y);
-        context.lineTo(x + 32, y -16);
-        context.lineTo(x + 64, y);
-        context.lineTo(x + 32, y + 16);
-        context.lineTo(x, y);
-        context.fill();
-    }
-
-    fillSubstrate = () => {
-        const {cellHeight} = this.data;
-
-        for (let i = 0; i < this.screen.width + cellHeight; i+= (cellHeight * 2)) {
-
-            for (let j = 0; j < this.screen.height + cellHeight; j+= cellHeight) {
-                this.getRhombus([i, j, '#eee']);
-                this.getRhombus([i - cellHeight, j + cellHeight / 2, '#ddd']);
-            }
-
-        }
-
     }
 }
