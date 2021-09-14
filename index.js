@@ -1,7 +1,6 @@
 const express = require('express');
 const config = require('config');
 const path = require('path');
-const mongoose = require('mongoose');
 
 const index = express();
 
@@ -18,16 +17,7 @@ if (process.env.NODE_ENV === 'production') {
 const PORT = config.get('serverPort') || 5000;
 
 async function start() {
-    try {
-        await mongoose.connect(`${config.get('mongoUri')}:${config.get('mongoPort')}`, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true
-        })
-        index.listen(PORT, () => console.log(`App has been started on port ${PORT}`));
-    } catch (e) {
-        console.log('Connection error', e.message);
-    }
+    index.listen(PORT, () => console.log(`App has been started on port ${PORT}`));
 }
 
 start();
