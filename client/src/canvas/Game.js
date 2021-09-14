@@ -1,4 +1,5 @@
-import {Screen} from "./Screen";
+import {ScreenSubstrate} from "./ScreenSubstrate";
+import {ScreenMain} from "./ScreenMain";
 //import {ImageLoader} from "./ImageLoader";
 
 export class Game {
@@ -7,7 +8,8 @@ export class Game {
         this.oldData = {};
         this.loadCallback = loadCallback;
         this.images = {};
-        this.screen = new Screen();
+        this.screenSubstrate = new ScreenSubstrate(this.callback);
+        this.screenMain = new ScreenMain();
     }
 
     initial = async () => {
@@ -15,6 +17,10 @@ export class Game {
         //const loader = new ImageLoader(artPaths);
         //this.images = await loader.load();
         this.loadCallback(false);
+    }
+
+    callback = (x, y) => {
+        this.screenMain.setCoord(x, y);
     }
 
     updateData = () => {

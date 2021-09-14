@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {Game} from "../../canvas/Game";
 
 const Canvas = styled.canvas`
+  position: absolute;
 `
 
 class Main extends React.Component {
@@ -16,7 +17,10 @@ class Main extends React.Component {
     }
 
     render = () => {
-        return <Canvas/>
+        return <>
+            <Canvas className={'substrate_canvas'}/>
+            <Canvas className={'main_canvas'}/>
+        </>
     }
 
     loadCallback = () => {

@@ -9,7 +9,7 @@
     "client": "npm run start --prefix client",
     "build": "npm run build --prefix client",
     "client_ci": "npm ci --prefix client",
-    "dev": "cross-env NODE_ENV=development concurrently \"npm run server\" \"npm run client\""
+    "dev": "cross-env NODE_ENV=development concurrently \"npm run client\""
   },
   "repository": {
     "type": "git",

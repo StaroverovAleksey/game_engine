@@ -1,16 +1,25 @@
 import {CELL_HALF_HEIGHT, CELL_HEIGHT, CELL_WIDTH} from "../utils/constans";
 
-export class Screen {
-    constructor() {
+export class ScreenSubstrate {
+    constructor(callback) {
+        this.callback = callback;
         this.rhombusSide = this.getSide(0, 0, CELL_HEIGHT, CELL_HALF_HEIGHT);
         this.rhombusArea = this.triangleArea(this.rhombusSide, this.rhombusSide, CELL_HEIGHT) * 2;
-        this.oldCursor = {x: 0, y: 0, color : ''};
+        this.oldCursor = {x: 0, y: 0};
         this.canvas = this._getCanvas();
         this.context = this.canvas.getContext('2d');
         window.addEventListener('resize', this._resizeHandler);
-        this.canvas.addEventListener('mousemove', this._mouseMoveHandler);
-        this.canvas.addEventListener('mouseout', this._mouseOutHandler);
+        window.addEventListener('mousemove', this._mouseMoveHandler);
         this._resizeHandler();
+    }
+
+    _getCanvas = () => {
+        return window.document.getElementsByTagName('canvas')[0];
+    }
+
+    _setSize = () => {
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
     }
 
     _resizeHandler = () => {
@@ -18,6 +27,10 @@ export class Screen {
         this.height = window.document.documentElement.clientHeight;
         this._setSize();
         this.fillSubstrate();
+    }
+
+    _clearCanvas = () => {
+        this.context.clearRect(0, 0, this.width, this.height);
     }
 
     _mouseMoveHandler = (event) => {
@@ -46,11 +59,15 @@ export class Screen {
         }
 
         if (this.oldCursor.x !== x || this.oldCursor.y !== y) {
-            this._clearCanvas();
-            this.fillSubstrate();
-            this.getRhombus(x, y, '#adadad');
+            this.callback (x, y);
             this.oldCursor = {x, y};
         }
+    }
+
+    getPixelColor = (x, y) => {
+        const {context} = this;
+        const pixelData = context.getImageData(x, y, 1, 1).data;
+        return `rgba(${pixelData[0]},${pixelData[1]},${pixelData[2]},${pixelData[2] / 250})`;
     }
 
     pointEnterRhombus = (x, y) => {
@@ -83,25 +100,6 @@ export class Screen {
         return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
 
-    _mouseOutHandler = () => {
-        this._clearCanvas();
-        this.fillSubstrate();
-    }
-
-    _getCanvas = () => {
-        return window.document.getElementsByTagName('canvas')[0];
-
-    }
-
-    _clearCanvas = () => {
-        this.context.clearRect(0, 0, this.width, this.height);
-    }
-
-    _setSize = () => {
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
-    }
-
     getRhombus = (x, y, color) => {
         const {context} = this;
         context.fillStyle = color;
@@ -118,7 +116,7 @@ export class Screen {
         console.log('--LOGGER-- ', 'fillSubstrate');
         for (let i = 0; i < this.width + CELL_HEIGHT; i+= CELL_WIDTH) {
 
-            for (let j = CELL_HALF_HEIGHT; j < this.height; j+= CELL_HEIGHT) {
+            for (let j = CELL_HALF_HEIGHT; j < this.height + CELL_HEIGHT; j+= CELL_HEIGHT) {
                 this.getRhombus(i, j, '#eee');
                 this.getRhombus(i - CELL_HEIGHT, j - CELL_HALF_HEIGHT, '#ddd');
             }
