@@ -1,6 +1,6 @@
 import React from "react";
 import Main from "./pages/Main";
-import Overlay from "./pages/Overlay";
+import MainOverlay from "./pages/MainOverlay";
 import {connect} from "react-redux";
 
 class App extends React.Component {
@@ -16,7 +16,7 @@ class App extends React.Component {
     render = () => {
         return <>
             <Main/>
-            <Overlay/>
+            <MainOverlay/>
         </>;
     }
 

@@ -1,5 +1,5 @@
 /*
-import {delExt, getExt, pathToArt} from "../tools/utils";
+import {delExt, getExt, pathToArt} from "../tools/tools";
 
 export class ImageLoader {
     constructor(artPaths) {

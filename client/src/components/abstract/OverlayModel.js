@@ -22,7 +22,7 @@ const InnerWrapper = styled.div`
 const Title = styled.div`
   display: flex;
   width: 100%;
-  height: 25px;
+  height: 30px;
   box-sizing: border-box;
   background-color: #e7eaed;
   justify-content: flex-end;
@@ -95,12 +95,12 @@ class OverlayModel extends React.Component {
 
     render = () => {
         const {width, height, top, full, left, cursor} = this.state;
-        const {overlays} = this.props;
+        const {overlays, menu} = this.props;
         if (!overlays.main) {
             return null;
         }
-        return <>
-            <InnerWrapper style={{width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px`, cursor}}>
+        return <InnerWrapper style={{width: `${width}px`, height: `${height}px`, top: `${top}px`, left: `${left}px`, cursor}}>
+
                 <Title onMouseDown={this._mouseDownHandler}>
 
                     {full
@@ -110,12 +110,16 @@ class OverlayModel extends React.Component {
 
                     <CloseButton onClick={this._closeHandler}/>
                 </Title>
+
+                {menu ? menu : null}
+
                 <OuterWrapper>
                     {this.props.children}
                 </OuterWrapper>
+
                 <ExpandCorner resize={this._cornerResize} endResize={this._cornerEndResize}/>
-            </InnerWrapper>
-        </>;
+
+            </InnerWrapper>;
     }
 
     _mouseDownHandler = (event) => {

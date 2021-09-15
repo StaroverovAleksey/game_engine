@@ -1,4 +1,4 @@
-import {CELL_HALF_HEIGHT, CELL_HEIGHT, CELL_WIDTH} from "../utils/constans";
+import {CELL_HALF_HEIGHT, CELL_HEIGHT, CELL_WIDTH} from "../tools/constans";
 
 export class ScreenMain {
     constructor() {

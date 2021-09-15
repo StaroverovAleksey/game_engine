@@ -1,23 +1,35 @@
 const express = require('express');
-const config = require('config');
 const path = require('path');
 
-const index = express();
+const app = express();
 
-index.use(express.json({ extended: true }));
+app.use(express.json({ extended: true }));
+
+/* Возврат заголовков, для кроссдоменного AJAX (только для дев режима) */
+if (process.env.NODE_ENV !== 'production') {
+    console.log('dfbdfb')
+    app.use((req, res, next) => {
+        res.header(`Access-Control-Allow-Origin`, '*');
+        res.header(`Access-Control-Allow-Methods`, `GET, POST, OPTIONS, PUT, PATCH, DELETE`);
+        res.header('Access-Control-Allow-Credentials', 'true');
+        res.header(`Access-Control-Allow-Headers`, `Origin, X-Requested-With, Content-Type, Accept, Set-Cookie`);
+        next();
+    });
+}
+app.use('/', express.static(path.join(__dirname, 'arts')));
 
 if (process.env.NODE_ENV === 'production') {
-    index.use('/', express.static(path.join(__dirname, 'client', 'dist')));
+    app.use('/', express.static(path.join(__dirname, 'client', 'dist')));
 
-    index.get('*', (req, res) => {
+    app.get('*', (req, res) => {
         res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
     });
 }
 
-const PORT = config.get('serverPort') || 5000;
+const PORT = 80;
 
 async function start() {
-    index.listen(PORT, () => console.log(`App has been started on port ${PORT}`));
+    app.listen(PORT, () => console.log(`App has been started on port ${PORT}`));
 }
 
 start();

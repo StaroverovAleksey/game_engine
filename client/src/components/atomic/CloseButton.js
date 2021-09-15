@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const Button = styled.div`
   position: relative;
-  width: 40px;
+  width: 50px;
   height: 100%;
   cursor: pointer;
   :hover {
@@ -17,8 +17,8 @@ const Button = styled.div`
   :before {
     display: block;
     position: absolute;
-    top: 4px;
-    left: 19px;
+    top: 6px;
+    left: 25px;
     content: '';
     background-color: #8b8d8f;
     width: 1px;
@@ -28,8 +28,8 @@ const Button = styled.div`
   :after {
     display: block;
     position: absolute;
-    top: 4px;
-    left: 19px;
+    top: 6px;
+    left: 25px;
     content: '';
     background-color: #8b8d8f;
     width: 1px;
