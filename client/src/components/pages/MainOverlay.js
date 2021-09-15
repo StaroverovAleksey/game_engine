@@ -13,16 +13,8 @@ const InnerWrapper = styled.div`
   width: 100%;
   height: 100%;
   background-color: white;
-`
-
-const Card = styled.div`
-  height: 50px;
-  margin: 10px;
-  margin-bottom: 0;
-  background-color: #f1f3f4;
-  color: #777;
-  font-weight: bold;
-`
+  overflow-y: auto;
+`;
 
 class MainOverlay extends React.Component {
   constructor(props) {
