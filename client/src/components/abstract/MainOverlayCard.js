@@ -42,7 +42,6 @@ class MainOverlayCard extends React.Component {
     render = () => {
         const {buttonValue, buttons} = this.state;
         const {title, data} = this.props;
-        console.log(data);
         return <Card>
             <Title>{title}</Title>
             <ImageWrapper>

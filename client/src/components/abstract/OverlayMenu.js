@@ -40,8 +40,8 @@ class OverlayMenu extends React.Component {
     }
 
     componentDidMount() {
-        const {data, callback} = this.props;
-        const storage = localStorage.getItem('OVERLAY_MAIN_CHOICE');
+        /*const {data, callback} = this.props;
+        const storage = localStorage.getItem('ART_CHOICE');
         if (!storage) {
             const selectValue = (Object.keys(data)[0]);
             const buttonValue = Object.keys(data[selectValue])[0];
@@ -50,7 +50,7 @@ class OverlayMenu extends React.Component {
                 buttonValue,
                 buttons: Object.keys(data[selectValue]).map((value) => value)
             });
-            localStorage.setItem('OVERLAY_MAIN_CHOICE', JSON.stringify({selectValue, buttonValue}));
+            localStorage.setItem('ART_CHOICE', JSON.stringify({selectValue, buttonValue}));
             callback({selectValue, buttonValue});
         } else {
             const {selectValue, buttonValue} = JSON.parse(storage);
@@ -60,7 +60,7 @@ class OverlayMenu extends React.Component {
                 buttons: Object.keys(data[selectValue]).map((value) => value)
             });
             callback({selectValue, buttonValue});
-        }
+        }*/
     }
 
     render = () => {
@@ -91,7 +91,7 @@ class OverlayMenu extends React.Component {
             ...newState,
             buttons: Object.keys(data[value]).map((value) => value)
         });
-        localStorage.setItem('OVERLAY_MAIN_CHOICE', JSON.stringify(newState));
+        localStorage.setItem('ART_CHOICE', JSON.stringify(newState));
         callback(newState);
     }
 
@@ -100,7 +100,7 @@ class OverlayMenu extends React.Component {
         const {callback} = this.props;
         const {innerText} = event.target;
         this.setState({buttonValue: innerText});
-        localStorage.setItem('OVERLAY_MAIN_CHOICE', JSON.stringify({selectValue, buttonValue: innerText}));
+        localStorage.setItem('ART_CHOICE', JSON.stringify({selectValue, buttonValue: innerText}));
         callback({selectValue, buttonValue: innerText});
     }
 

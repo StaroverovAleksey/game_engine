@@ -7,7 +7,6 @@ app.use(express.json({ extended: true }));
 
 /* Возврат заголовков, для кроссдоменного AJAX (только для дев режима) */
 if (process.env.NODE_ENV !== 'production') {
-    console.log('dfbdfb')
     app.use((req, res, next) => {
         res.header(`Access-Control-Allow-Origin`, '*');
         res.header(`Access-Control-Allow-Methods`, `GET, POST, OPTIONS, PUT, PATCH, DELETE`);

@@ -4,3 +4,10 @@ export const isEmpty = (obj) => {
     }
     return true;
 };
+
+export const firstProp = (obj) => {
+    for (const key in obj) {
+        return key;
+    }
+    return null;
+};
