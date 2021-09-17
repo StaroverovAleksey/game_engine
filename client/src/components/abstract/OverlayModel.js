@@ -169,8 +169,9 @@ class OverlayModel extends React.Component {
     }
 
     _closeHandler = () => {
-        const {name} = this.props;
+        const {name, closeCallback} = this.props;
         this.props.dispatch({ type: `OVERLAYS_${name}_STATE`, payload: false });
+        closeCallback();
     }
 
     _cornerResize = (x, y) => {

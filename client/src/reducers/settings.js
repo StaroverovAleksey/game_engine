@@ -13,7 +13,6 @@ export default function reducer(state = defaultState, action) {
       const {screenWidth, screenHeight} = action.payload;
       return { ...state, screenWidth, screenHeight };
     case 'SETTINGS_ART_CHOICE':
-      console.log(action.payload);
       return { ...state, ...action.payload };
     default: return state;
   }

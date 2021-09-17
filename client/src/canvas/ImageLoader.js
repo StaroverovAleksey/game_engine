@@ -1,33 +1,24 @@
-/*
-import {delExt, getExt, pathToArt} from "../tools/tools";
-
-export class ImageLoader {
-    constructor(artPaths) {
-        this.artPaths = artPaths;
+export default class ImageLoader {
+    constructor(jsonMaps) {
+        this.jsonMaps = jsonMaps;
         this.images = {};
     }
 
     load = async () => {
         const promises = [];
-        Object.entries(this.artPaths).forEach(([category, imgArray]) => {
-            this.images[category] = [];
-            imgArray.forEach((src) => {
-                if(getExt(src) === 'png' || getExt(src) === 'jpg') {
-                    promises.push(this.loadImage(category, src));
-                }
-            });
+        Object.keys(this.jsonMaps).forEach((value) => {
+            promises.push(this.loadImage(value));
         })
         await Promise.all(promises);
         return this.images;
     }
 
-    loadImage = (category, src) => {
+    loadImage = (value) => {
         return new Promise((resolve) => {
             const image = new Image();
-            this.images[category][delExt(src)] = image;
+            this.images[value] = image;
             image.onload = () => resolve();
-            image.src = `${pathToArt()}${category}/${src}`;
+            image.src = `http://localhost/${value}.png`;
         });
     }
 }
-*/

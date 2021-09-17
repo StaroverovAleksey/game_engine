@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import {connect} from "react-redux";
+import {isEmpty} from "../../tools/utils";
 
 const Menu = styled.div`
   display: flex;
@@ -13,7 +15,7 @@ const Menu = styled.div`
 const Select = styled.select`
   min-width: 100px;
   margin-right: 3px;
-`
+`;
 
 const Button = styled.button`
   min-width: 80px;
@@ -33,77 +35,59 @@ class OverlayMenu extends React.Component {
     constructor(props) {
         super(props);
         this.state ={
-            selectValue: '',
-            buttonValue: '',
             buttons: []
         }
     }
 
     componentDidMount() {
-        /*const {data, callback} = this.props;
-        const storage = localStorage.getItem('ART_CHOICE');
-        if (!storage) {
-            const selectValue = (Object.keys(data)[0]);
-            const buttonValue = Object.keys(data[selectValue])[0];
-            this.setState({
-                selectValue,
-                buttonValue,
-                buttons: Object.keys(data[selectValue]).map((value) => value)
-            });
-            localStorage.setItem('ART_CHOICE', JSON.stringify({selectValue, buttonValue}));
-            callback({selectValue, buttonValue});
-        } else {
-            const {selectValue, buttonValue} = JSON.parse(storage);
-            this.setState({
-                selectValue,
-                buttonValue,
-                buttons: Object.keys(data[selectValue]).map((value) => value)
-            });
-            callback({selectValue, buttonValue});
-        }*/
+        const {data} = this.props;
+        const {choiceFile} = this.props.settings;
+        const buttons = Object.keys(data[choiceFile]).map((value) => value);
+        this.setState({buttons});
     }
 
     render = () => {
-        const {selectValue, buttonValue, buttons} = this.state;
+        const {buttons} = this.state;
         const {data} = this.props;
+        const {choiceFile, choiceGroup} = this.props.settings;
+        if (isEmpty(data)) {
+            return null;
+        }
         return <Menu>
-            <Select onChange={this._selectChangeHandler} value={selectValue}>
+            <Select onChange={this._selectChangeHandler} value={choiceFile}>
                 {Object.keys(data).map((value, index) => <option key={`map_select_options_${index}`}>{value}</option>)}
             </Select>
             {buttons.map((value, index) => {
                 return <Button
                     onClick={this._buttonClickHandler}
                     key={`map_buttons_options_${index}`}
-                    selected={value === buttonValue}
+                    selected={value === choiceGroup}
                 >{value}</Button>;
             })}
         </Menu>;
     }
 
     _selectChangeHandler = (event) => {
+        const {dispatch, data} = this.props;
         const {value} = event.target;
-        const {data, callback} = this.props;
-        const newState = {
-            selectValue: value,
-            buttonValue: Object.keys(data[value])[0]
-        }
-        this.setState({
-            ...newState,
-            buttons: Object.keys(data[value]).map((value) => value)
-        });
-        localStorage.setItem('ART_CHOICE', JSON.stringify(newState));
-        callback(newState);
+        const buttons = Object.keys(data[value]).map((value) => value)
+        this.setState({buttons}, () => dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceFile: value, choiceGroup: buttons[0]}}));
+        localStorage.setItem('ART_CHOICE', JSON.stringify({choiceFile: value, choiceGroup: buttons[0]}));
     }
 
     _buttonClickHandler = (event) => {
-        const {selectValue} = this.state;
-        const {callback} = this.props;
+        const {dispatch} = this.props;
+        const {choiceFile} = this.props.settings;
         const {innerText} = event.target;
-        this.setState({buttonValue: innerText});
-        localStorage.setItem('ART_CHOICE', JSON.stringify({selectValue, buttonValue: innerText}));
-        callback({selectValue, buttonValue: innerText});
+        dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceGroup: innerText}});
+        localStorage.setItem('ART_CHOICE', JSON.stringify({choiceFile, choiceGroup: innerText}));
     }
 
 }
 
-export default OverlayMenu;
+export default connect(
+    (mapStateToProps) => ({
+        settings: mapStateToProps.settings,
+        data: mapStateToProps.data
+    }),
+)(OverlayMenu);

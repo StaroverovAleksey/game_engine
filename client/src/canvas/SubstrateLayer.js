@@ -1,6 +1,6 @@
 import {CELL_HALF_HEIGHT, CELL_HEIGHT, CELL_WIDTH} from "../tools/constans";
 
-export class ScreenSubstrate {
+export default class SubstrateLayer {
     constructor(callback) {
         this.callback = callback;
         this.rhombusSide = this.getSide(0, 0, CELL_HEIGHT, CELL_HALF_HEIGHT);

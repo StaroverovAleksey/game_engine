@@ -4,9 +4,10 @@ import styled from 'styled-components';
 const Card = styled.div`
   margin: 10px 10px 0 10px;
   padding: 10px 10px 5px 10px;
-  background-color: #f1f3f4;
   color: #777;
   font-weight: bold;
+  background-color: #f1f3f4;
+  box-shadow: ${({selected}) => selected ? '0 0 11px 2px rgba(34, 60, 80, 0.6) inset' : 'none'};
 `;
 
 const Title = styled.p`
@@ -27,7 +28,10 @@ const Image = styled.div`
   cursor: pointer;
   width: ${({width}) => `${width}px`};
   height: ${({height}) => `${height}px`};
-  border: 1px solid black;
+  background-image: ${({img}) => `url(http://localhost/${img}.png)`};
+  border: 1px solid #bbbbbb;
+  box-shadow: ${({selected}) => selected ? '0 0 5px 1px green inset' : 'none'};
+  border: ${({selected}) => selected ? '1px solid green' : '1px solid #bbbbbb'};
 `;
 
 class MainOverlayCard extends React.Component {
@@ -40,13 +44,21 @@ class MainOverlayCard extends React.Component {
     }
 
     render = () => {
-        const {buttonValue, buttons} = this.state;
-        const {title, data} = this.props;
-        return <Card>
+        const {title, data, choiceFile, choiceGroup, choiceSubgroup, choiceItem, callback} = this.props;
+        return <Card selected={title === choiceSubgroup} id={'choiceSubgroup'}>
             <Title>{title}</Title>
             <ImageWrapper>
-                {data.map(({cX, cY, sX, sY}) => {
-                    return <Image width={sX} height={sY} style={{backgroundImage: `url(http://localhost/grassland_tiles.png)`, backgroundPosition: `-${cX}px -${cY}px`}}/>
+                {data.map(({cX, cY, sX, sY}, index) => {
+                    return <Image
+                        selected={index === choiceItem && title === choiceSubgroup}
+                        onClick={(event) => callback(event, title)}
+                        id={index}
+                        key={`image_${choiceGroup}_${index}`}
+                        width={sX}
+                        height={sY}
+                        img={choiceFile}
+                        style={{backgroundPosition: `-${cX}px -${cY}px`}}
+                    />
                 })}
             </ImageWrapper>
         </Card>;

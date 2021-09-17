@@ -1,11 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import OverlayModel from "../abstract/OverlayModel";
-import map from "../../../../arts/map.json";
-import map1 from "../../../../arts/map1.json";
 import OverlayMenu from "../abstract/OverlayMenu";
-import {isEmpty} from "../../tools/utils";
 import MainOverlayCard from "../abstract/MainOverlayCard";
+import {connect} from "react-redux";
 
 const InnerWrapper = styled.div`
   display: flex;
@@ -26,31 +24,31 @@ class MainOverlay extends React.Component {
       left: 1000,
       full: false
     }
-    this.state = {
-      data: {},
-      selectValue: '',
-      buttonValue: ''
-    }
-  }
-
-  componentDidMount() {
-    this.setState({data: {map, map1}});
+    this.state = {}
   }
 
   render = () => {
-    const {data, selectValue, buttonValue} = this.state;
-    if (isEmpty(data)) {
-      return null;
-    }
+    const {data} = this.props;
+    const {choiceFile, choiceGroup, choiceSubgroup, choiceItem} = this.props.settings;
     return <OverlayModel
         name={'MAIN'}
         defaultSettings={this.defaultSettings}
-        menu={<OverlayMenu data={data} callback={this._menuCallback}/>}
+        closeCallback={this._closeHandler}
+        menu={<OverlayMenu/>}
     >
-      {selectValue && buttonValue
+      {choiceFile && choiceGroup
       ? <InnerWrapper>
-            {Object.entries(data[selectValue][buttonValue]).map(([key, value], index) => {
-              return <MainOverlayCard title={key} data={value}/>;
+            {Object.entries(data[choiceFile][choiceGroup]).map(([key, value], index) => {
+              return <MainOverlayCard
+                  key={`card_${index}`}
+                  title={key}
+                  data={value}
+                  choiceFile={choiceFile}
+                  choiceGroup={choiceGroup}
+                  choiceSubgroup={choiceSubgroup}
+                  choiceItem={choiceItem}
+                  callback={this._selectItemHandler}
+              />;
             })}
           </InnerWrapper>
       : null}
@@ -58,10 +56,21 @@ class MainOverlay extends React.Component {
       </OverlayModel>;
   }
 
-  _menuCallback = (data) => {
-    this.setState(data);
+  _selectItemHandler = (event, choiceSubgroup) => {
+    const {dispatch} = this.props;
+    dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceSubgroup, choiceItem: parseInt(event.target.id)}});
+  }
+
+  _closeHandler = () => {
+    const {dispatch} = this.props;
+    dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceSubgroup: null, choiceItem: null}});
   }
 
 }
 
-export default MainOverlay;
+export default connect(
+    (mapStateToProps) => ({
+      settings: mapStateToProps.settings,
+      data: mapStateToProps.data
+    }),
+)(MainOverlay);

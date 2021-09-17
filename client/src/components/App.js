@@ -4,7 +4,7 @@ import MainOverlay from "./pages/MainOverlay";
 import map from "../../../arts/map.json";
 import map1 from "../../../arts/map1.json";
 import {connect} from "react-redux";
-import {firstProp} from "../tools/utils";
+import {firstProp, isEmpty, nextProp, previousProp} from "../tools/utils";
 
 class App extends React.Component {
     constructor(props) {
@@ -14,10 +14,18 @@ class App extends React.Component {
     componentDidMount() {
         window.document.addEventListener('keydown', this._keyHandler);
         window.addEventListener('resize', this._resizeHandler);
-        this.setState({data: {map, map1}}, this._checkChoiceArt);
+        const data = {map, map1};
+        this.setState({data}, () => {
+            this._checkChoiceArt();
+            this.props.dispatch({type: 'DATA_LOAD', payload: data});
+        });
     }
 
     render = () => {
+        const {data} = this.props;
+        if (isEmpty(data)) {
+            return null;
+        }
         return <>
             <Main/>
             <MainOverlay/>
@@ -25,10 +33,42 @@ class App extends React.Component {
     }
 
     _keyHandler = (event) => {
-        const {overlays} = this.props;
+        const {data} = this.state;
+        const {dispatch, overlays} = this.props;
+        const {choiceFile, choiceGroup, choiceSubgroup, choiceItem} = this.props.settings;
         switch (event.code) {
-            case 'Space': return this.props.dispatch({ type: 'OVERLAYS_MAIN_STATE', payload: !overlays.main });
-            case 'Escape': return overlays.main ? this.props.dispatch({ type: 'OVERLAYS_MAIN_STATE', payload: false }) : null;
+            case 'Space':
+                if(overlays.main) {
+                    dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceSubgroup: null, choiceItem: null}});
+                }
+                dispatch({ type: 'OVERLAYS_MAIN_STATE', payload: !overlays.main });
+                break;
+            case 'Escape':
+                if(overlays.main) {
+                    dispatch({ type: 'OVERLAYS_MAIN_STATE', payload: false });
+                    dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceSubgroup: null, choiceItem: null}});
+                }
+                break;
+            case 'ArrowRight':
+                if(overlays.main && choiceSubgroup) {
+                    dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceItem: data[choiceFile][choiceGroup][choiceSubgroup].length - 1 > choiceItem ? choiceItem + 1 : 0}});
+                }
+                break;
+            case 'ArrowLeft':
+                if(overlays.main && choiceSubgroup) {
+                    dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceItem: choiceItem > 0 ? choiceItem - 1 : data[choiceFile][choiceGroup][choiceSubgroup].length - 1}});
+                }
+                break;
+            case 'ArrowUp':
+                if(overlays.main && choiceSubgroup) {
+                    dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceSubgroup: previousProp(data[choiceFile][choiceGroup], choiceSubgroup), choiceItem: 0}});
+                }
+                break;
+            case 'ArrowDown':
+                if(overlays.main && choiceSubgroup) {
+                    dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceSubgroup: nextProp(data[choiceFile][choiceGroup], choiceSubgroup), choiceItem: 0}});
+                }
+                break;
         }
     }
 
@@ -47,7 +87,7 @@ class App extends React.Component {
         const storage = localStorage.getItem('ART_CHOICE');
         const parsedStorage = JSON.parse(storage);
         if (storage) {
-            const props = ['choiceFile', 'choiceGroup', 'choiceSubgroup', 'choiceItem'];
+            const props = ['choiceFile', 'choiceGroup'];
             props.forEach((value) => {
                 return parsedStorage.hasOwnProperty(value)
                     && parsedStorage[value]
@@ -63,14 +103,15 @@ class App extends React.Component {
         const {dispatch} = this.props;
         const choiceFile = firstProp(data);
         const choiceGroup = firstProp(data[choiceFile]);
-        const choiceSubgroup = firstProp(data[choiceFile][choiceGroup]);
-        dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceFile, choiceGroup, choiceSubgroup}});
-        localStorage.setItem('ART_CHOICE', JSON.stringify({choiceFile, choiceGroup, choiceSubgroup, choiceItem: null}));
+        dispatch({type: 'SETTINGS_ART_CHOICE', payload: {choiceFile, choiceGroup}});
+        localStorage.setItem('ART_CHOICE', JSON.stringify({choiceFile, choiceGroup}));
     }
 }
 
 export default connect(
     (mapStateToProps) => ({
-        overlays: mapStateToProps.overlays
+        overlays: mapStateToProps.overlays,
+        settings: mapStateToProps.settings,
+        data: mapStateToProps.data,
     }),
 )(App);

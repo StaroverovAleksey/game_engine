@@ -1,12 +1,13 @@
-import {CELL_HALF_HEIGHT, CELL_HEIGHT, CELL_WIDTH} from "../tools/constans";
+import {CELL_HALF_HEIGHT} from "../tools/constans";
 
-export class ScreenMain {
+export default class DynamicLayer {
     constructor() {
         this.canvas = this._getCanvas();
         this.context = this.canvas.getContext('2d');
         window.addEventListener('resize', this._resizeHandler);
         window.addEventListener('mouseout', this._mouseOutHandler);
         this._resizeHandler();
+        this.chosenSection = null;
     }
 
     _getCanvas = () => {
@@ -24,35 +25,27 @@ export class ScreenMain {
         this._setSize();
     }
 
-    _clearCanvas = () => {
+    clearCanvas = () => {
         this.context.clearRect(0, 0, this.width, this.height);
     }
 
     _mouseOutHandler = () => {
-        this._clearCanvas();
-    }
-
-    getPixelColor = (x, y) => {
-        const {context} = this;
-        const pixelData = context.getImageData(x, y, 1, 1).data;
-        return `rgba(${pixelData[0]},${pixelData[1]},${pixelData[2]},${pixelData[2] / 250})`;
+        this.clearCanvas();
     }
 
     setCoord = (x, y) => {
-        this._clearCanvas();
-        this.getRhombus(x, y, 'red');
+        if (!this.chosenSection) {
+            return;
+        }
+        const {context} = this;
+        const {cX, cY, sX, sY} = this.chosenSection;
+        this.clearCanvas();
+        context.drawImage(this.img, cX, cY, sX, sY, x, y - CELL_HALF_HEIGHT, sX, sY);
     }
 
-    getRhombus = (x, y, color) => {
-        const {context} = this;
-        context.fillStyle = color;
-        context.beginPath();
-        context.moveTo(x, y);
-        context.lineTo(x + CELL_HEIGHT, y - CELL_HALF_HEIGHT);
-        context.lineTo(x + CELL_WIDTH, y);
-        context.lineTo(x + CELL_HEIGHT, y + CELL_HALF_HEIGHT);
-        context.lineTo(x, y);
-        context.fill();
+    setImage = (img, chosenSection) => {
+        this.img = img;
+        this.chosenSection = chosenSection;
     }
 
 }
