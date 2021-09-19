@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import SubstrateLayer from "../../canvas/SubstrateLayer";
 import DynamicLayer from "../../canvas/DynamicLayer";
 import ImageLoader from "../../canvas/ImageLoader";
+import ImageLayer from "../../canvas/ImageLayer";
 
 const Canvas = styled.canvas`
   position: absolute;
@@ -22,6 +23,7 @@ class Main extends React.Component {
     componentDidMount() {
         this.substrateLayer = new SubstrateLayer(this.callback);
         this.dynamicLayer = new DynamicLayer();
+        this.imageLayer = new ImageLayer();
         this._initial().then(() => {
             this._run();
             this.setState({loading: false});
@@ -35,6 +37,9 @@ class Main extends React.Component {
             try {
                 this.dynamicLayer.setImage(this.images[choiceFile], data[choiceFile][choiceGroup][choiceSubgroup][choiceItem]);
                 this.dynamicLayer.setCoord(this.mouseX, this.mouseY);
+
+                this.imageLayer.setImage(this.images[choiceFile], data[choiceFile][choiceGroup][choiceSubgroup][choiceItem]);
+                this.imageLayer.setCoord(this.mouseX, this.mouseY);
             } catch (e) {
                 this.dynamicLayer.setImage(null);
                 this.dynamicLayer.clearCanvas();
@@ -45,7 +50,8 @@ class Main extends React.Component {
     render = () => {
         return <>
             <Canvas className={'substrate_canvas'}/>
-            <Canvas className={'main_canvas'}/>
+            <Canvas className={'image_canvas'}/>
+            <Canvas className={'dynamic_canvas'} onClick={this._clickHandler}/>
         </>
     }
 
@@ -56,17 +62,21 @@ class Main extends React.Component {
     }
 
     _run = () => {
-        requestAnimationFrame((time) => this._frame(time))
+        //requestAnimationFrame((time) => this._frame(time))
     }
 
     _frame = () => {
-        requestAnimationFrame((time) => this._frame(time))
+        //requestAnimationFrame((time) => this._frame(time))
     }
 
     callback = (x, y) => {
         this.mouseX = x;
         this.mouseY = y;
         this.dynamicLayer.setCoord(x, y);
+    }
+
+    _clickHandler = () => {
+        this.imageLayer.setCoord(this.mouseX, this.mouseY);
     }
 }
 
