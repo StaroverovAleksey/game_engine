@@ -5,6 +5,7 @@ import map from "../../../arts/map.json";
 import map1 from "../../../arts/map1.json";
 import {connect} from "react-redux";
 import {firstProp, isEmpty, nextProp, previousProp} from "../tools/utils";
+import MainMenu from "./abstract/MainMenu";
 
 class App extends React.Component {
     constructor(props) {
@@ -28,6 +29,7 @@ class App extends React.Component {
         }
         return <>
             <Main/>
+            <MainMenu/>
             <MainOverlay/>
         </>;
     }

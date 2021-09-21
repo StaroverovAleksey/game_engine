@@ -16,16 +16,28 @@ class Main extends React.Component {
         this.mouseX = 0;
         this.mouseY = 0;
         this.state = {
-            loading: true
+            loading: true,
+            chosenFile: null,
+            chosenData: null,
+            mapData: []
         }
     }
 
     componentDidMount() {
-        this.substrateLayer = new SubstrateLayer(this.callback);
-        this.dynamicLayer = new DynamicLayer();
-        this.imageLayer = new ImageLayer();
+        const mapData = JSON.parse(localStorage.getItem('MAP_DATA')) || [];
+        this.setState({mapData}, () => {
+            this.substrateLayer = new SubstrateLayer(this.callback);
+            this.dynamicLayer = new DynamicLayer();
+            this.imageLayer = new ImageLayer(mapData);
+        });
         this._initial().then(() => {
             this._run();
+
+            mapData.forEach((value) => {
+                this.imageLayer.drawImage(value.coord.x, value.coord.y, this.images[value.img], value.data);
+            })
+
+
             this.setState({loading: false});
         });
     }
@@ -34,16 +46,19 @@ class Main extends React.Component {
         const {data} = this.props;
         const {choiceFile, choiceGroup, choiceSubgroup, choiceItem} = this.props.settings;
         if (prevProps.settings.choiceItem !== choiceItem || prevProps.settings.choiceSubgroup !== choiceSubgroup) {
-            try {
-                this.dynamicLayer.setImage(this.images[choiceFile], data[choiceFile][choiceGroup][choiceSubgroup][choiceItem]);
-                this.dynamicLayer.setCoord(this.mouseX, this.mouseY);
 
-                this.imageLayer.setImage(this.images[choiceFile], data[choiceFile][choiceGroup][choiceSubgroup][choiceItem]);
-                this.imageLayer.setCoord(this.mouseX, this.mouseY);
+            let chosenFile, chosenData;
+            try {
+                chosenFile = this.images[choiceFile];
+                chosenData = data[choiceFile][choiceGroup][choiceSubgroup][choiceItem];
             } catch (e) {
-                this.dynamicLayer.setImage(null);
-                this.dynamicLayer.clearCanvas();
+                chosenFile = null;
+                chosenData = null;
             }
+            this.setState({chosenFile,chosenData}, () => {
+                this.dynamicLayer.drawImage(this.mouseX, this.mouseY, chosenFile, chosenData);
+            });
+
         }
     }
 
@@ -70,13 +85,27 @@ class Main extends React.Component {
     }
 
     callback = (x, y) => {
+        const {chosenFile, chosenData} = this.state;
         this.mouseX = x;
         this.mouseY = y;
-        this.dynamicLayer.setCoord(x, y);
+        this.dynamicLayer.drawImage(x, y, chosenFile, chosenData);
     }
 
     _clickHandler = () => {
-        this.imageLayer.setCoord(this.mouseX, this.mouseY);
+        const {mapData, chosenFile, chosenData} = this.state;
+        const {choiceFile} = this.props.settings;
+        if (!chosenData) {
+            return;
+        }
+        const newData = JSON.parse(JSON.stringify(mapData));
+        newData.push({
+            coord: {x: this.mouseX, y: this.mouseY},
+            img: choiceFile,
+            data: chosenData
+        })
+        this.setState({mapData: newData});
+        this.imageLayer.drawImage(this.mouseX, this.mouseY, chosenFile, chosenData);
+        localStorage.setItem('MAP_DATA', JSON.stringify(newData));
     }
 }
 

@@ -11,7 +11,7 @@ export default class DynamicLayer {
     }
 
     _getCanvas = () => {
-        return window.document.getElementsByTagName('canvas')[1];
+        return window.document.getElementsByTagName('canvas')[2];
     }
 
     _setSize = () => {
@@ -33,19 +33,15 @@ export default class DynamicLayer {
         this.clearCanvas();
     }
 
-    setCoord = (x, y) => {
-        if (!this.chosenSection) {
+    drawImage = (x, y, img, data) => {
+        if (!data) {
+            this.clearCanvas();
             return;
         }
         const {context} = this;
-        const {cX, cY, sX, sY} = this.chosenSection;
+        const {cX, cY, sX, sY} = data;
         this.clearCanvas();
-        context.drawImage(this.img, cX, cY, sX, sY, x, y - CELL_HALF_HEIGHT, sX, sY);
-    }
-
-    setImage = (img, chosenSection) => {
-        this.img = img;
-        this.chosenSection = chosenSection;
+        context.drawImage(img, cX, cY, sX, sY, x, y - CELL_HALF_HEIGHT, sX, sY);
     }
 
 }

@@ -6,11 +6,10 @@ export default class ImageLayer {
         this.context = this.canvas.getContext('2d');
         window.addEventListener('resize', this._resizeHandler);
         this._resizeHandler();
-        this.data = {};
     }
 
     _getCanvas = () => {
-        return window.document.getElementsByTagName('canvas')[2];
+        return window.document.getElementsByTagName('canvas')[1];
     }
 
     _setSize = () => {
@@ -24,23 +23,13 @@ export default class ImageLayer {
         this._setSize();
     }
 
-    clearCanvas = () => {
-        this.context.clearRect(0, 0, this.width, this.height);
-    }
-
-    setCoord = (x, y) => {
-        if (!this.chosenSection) {
+    drawImage = (x, y, img, data) => {
+        if (!data) {
             return;
         }
         const {context} = this;
-        const {cX, cY, sX, sY} = this.chosenSection;
-        //this.clearCanvas();
-        context.drawImage(this.img, cX, cY, sX, sY, x, y - CELL_HALF_HEIGHT, sX, sY);
-    }
-
-    setImage = (img, chosenSection) => {
-        this.img = img;
-        this.chosenSection = chosenSection;
+        const {cX, cY, sX, sY} = data;
+        context.drawImage(img, cX, cY, sX, sY, x, y - CELL_HALF_HEIGHT, sX, sY);
     }
 
 }
